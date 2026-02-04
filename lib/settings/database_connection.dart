@@ -23,6 +23,8 @@ class DatabaseConnection {
   Future<Database> _inicializarDb() async {
     final rutaDb = await getDatabasesPath();
     final rutaFinal = join(rutaDb, 'zoologico.db');
+    
+
 
     return await openDatabase(
       rutaFinal,
@@ -103,5 +105,7 @@ class DatabaseConnection {
         await db.execute('CREATE INDEX idx_historial_animal ON historial_medico(id_animal)');
       },
     );
+    
   }
+  
 }
