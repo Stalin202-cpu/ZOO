@@ -1,57 +1,57 @@
 import 'package:sqflite/sqflite.dart';
 
-import '../models/recinto_model.dart';
+import '../models/especie_model.dart';
 import '../settings/database_connection.dart';
 
-class RecintoRepository {
-  final tableName = "recintos";
+class EspecieRepository {
+  final tableName = "especies";
   final database = DatabaseConnection.instance;
 
-  // funcion para insertar datos
-  Future<int> create(RecintoModel data) async {
+  // insertar
+  Future<int> create(EspecieModel data) async {
     final db = await database.db;
     return await db.insert(tableName, data.toMap());
   }
 
-  // funcion para editar datos
-  Future<int> edit(RecintoModel data) async {
+  // editar
+  Future<int> edit(EspecieModel data) async {
     final db = await database.db;
     return await db.update(
       tableName,
       data.toMap(),
-      where: 'id_recinto = ?',
-      whereArgs: [data.idRecinto],
+      where: 'id_especie = ?',
+      whereArgs: [data.idEspecie],
     );
   }
 
-  // funcion para listar datos
-  Future<List<RecintoModel>> getAll() async {
+  // listar
+  Future<List<EspecieModel>> getAll() async {
     final db = await database.db;
     final response = await db.query(tableName);
 
-    return response.map((e) => RecintoModel.fromMap(e)).toList();
+    return response.map((e) => EspecieModel.fromMap(e)).toList();
   }
 
-  // validación: contar animales asignados a un recinto (consulta permitida: animales)
-  Future<int> countAnimalesAsignados(int idRecinto) async {
+  // validación: animales asociados
+  Future<int> countAnimales(int idEspecie) async {
     final db = await database.db;
 
     final res = await db.rawQuery(
-      'SELECT COUNT(*) FROM animales WHERE id_recinto = ?',
-      [idRecinto],
+      'SELECT COUNT(*) FROM animales WHERE id_especie = ?',
+      [idEspecie],
     );
 
     return Sqflite.firstIntValue(res) ?? 0;
   }
 
-  // funcion para eliminar (validación: no eliminar recintos con animales asignados)
+  // eliminar
   Future<int> delete(int id) async {
-    final total = await countAnimalesAsignados(id);
+    final total = await countAnimales(id);
     if (total > 0) {
-      throw Exception("RECINTO_CON_ANIMALES");
+      throw Exception("ESPECIE_CON_ANIMALES");
     }
 
     final db = await database.db;
-    return await db.delete(tableName, where: 'id_recinto = ?', whereArgs: [id]);
+    return await db.delete(tableName, where: 'id_especie = ?', whereArgs: [id]);
   }
 }

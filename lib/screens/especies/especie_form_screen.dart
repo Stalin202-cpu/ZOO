@@ -149,17 +149,26 @@ class _EspecieFormState extends State<EspecieForm> {
               // =========================
               // NIVEL PELIGRO
               // =========================
-              TextFormField(
-                controller: nivelPeligroController,
+              DropdownButtonFormField<String>(
+                value: nivelPeligroController.text.isEmpty
+                    ? null
+                    : nivelPeligroController.text,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "El nivel de peligro es requerido";
+                    return "Seleccione el nivel de peligro";
                   }
                   return null;
                 },
+                items: const [
+                  DropdownMenuItem(value: "Bajo", child: Text("Bajo")),
+                  DropdownMenuItem(value: "Medio", child: Text("Medio")),
+                  DropdownMenuItem(value: "Alto", child: Text("Alto")),
+                ],
+                onChanged: (value) {
+                  nivelPeligroController.text = value!;
+                },
                 decoration: InputDecoration(
                   labelText: "Nivel de peligro",
-                  hintText: "Ingrese el nivel de peligro",
                   prefixIcon: Icon(Icons.warning),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
